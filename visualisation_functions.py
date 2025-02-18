@@ -15,7 +15,7 @@ def load_movie_data(path=None):
     return pd.read_csv(path)
 
 
-def histplot(df, x_axis, y_axis=None, groupby=None, aggregationtype=None):
+def histplot(df, x_axis='Year', y_axis=None, groupby=None, aggregationtype=None):
     '''
     Erstellt ein Histogram/Barplot mit den gegebenen Daten. Moegliche Werte fuer aggregationtype = ['count', 'sum', 'avg', 'min', 'max', 'median', 'max', 'min']
     groupby = kategorische column
