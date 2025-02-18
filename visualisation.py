@@ -35,19 +35,74 @@ with head_container:
     mid_col.header(f":curry: Cook Spicy Graphs and Figures :curry:", )
     mid_col.write(":fork_and_knife: Your own Movie-Data-Visualisation")
 
+expander_infos = st.expander('General Dataset Information')
+with expander_infos:
+    infos = vf.essential_infos(data)
+    info_columns = [collef, colmid, colright] = st.columns(3)
+
+    with collef:
+        st.write(f'''**Total Titles:**  
+                 {infos["Title_count"]}''')
+        st.write(f'''**With Oscars:**  
+                 {infos["With_Oscars"]}''')
+        st.write(f'''**Mean Duration:**  
+                 {infos["Duration"]}''')
+        st.write(f'''**Mean Rating:**  
+                 {infos["Rating"]}''')
+        st.write(f'''**Mean Votes:**  
+                 {infos["Votes"]}''')
+        st.write(f'''**Mean Budget:**  
+                 {infos["budget"]}''')
+        st.write(f'''**Mean World Wide Gross:**  
+                 {infos["grossWorldWide"]}''')
+        st.write(f'''**Mean US&Canada Gross:**  
+             {infos["gross_US_Canada"]}''')
+    with colmid:    
+        st.write(f'''**Mean Gross Opening Weekend:**  
+                 {infos["opening_weekend_Gross"]}''')
+        st.write(f'''**Mean Wins:**  
+                 {infos["wins"]}''')
+        st.write(f'''**Mean Nominations:**  
+                 {infos["nominations"]}''')
+        st.write(f'''**Mean Oscars:**  
+                 {infos["oscars"]}''')
+        st.write(f'''**Mean Inflation-adjusted Opening Gross:**  
+                 {infos["inflation_gross_opening"]}''')
+        st.write(f'''**Mean Inflation-adjusted Budget:**  
+                 {infos["budget_inflation"]}''')
+        st.write(f'''**No. Years:**  
+                 {infos["Year"]}''')
+        st.write(f'''**No. Decades:**  
+                 {infos["decade"]}''')
+    with colright:
+        st.write(f'''**No. MPA-Categories:**  
+                 {infos["MPA_category"]}''')
+        st.write(f'''**Total Directors:**  
+                 {infos["directors"]}''')
+        st.write(f'''**Total writers:**  
+                 {infos["writers"]}''')
+        st.write(f'''**Total Actors/stars:**  
+                 {infos["stars"]}''')
+        st.write(f'''**Total Countries:**  
+                 {infos["countries_origin"]}''')
+        st.write(f'''**Total Filming Locations:**  
+                 {infos["filming_locations"]}''')
+        st.write(f'''**No. Languages:**  
+                 {infos["Languages"]}''')
+        st.write(f'''**No. Genres:**  
+                 {infos["main_genres"]}''')
+    
    
-    expander_filter = st.expander('Do you want some Filter to your Stew? :stew:')
-    with expander_filter:
-        if 'filtered_data' not in st.session_state:
-            st.session_state['filtered_data'] = vifil.filter_options(data)
+expander_filter = st.expander('Do you want some Filter to your Stew? :stew:')
+with expander_filter:
+    if 'filtered_data' not in st.session_state:
         st.session_state['filtered_data'] = vifil.filter_options(data)
-
-        st.session_state['use_filtered'] = st.toggle('Apply Filters')
-
-        if st.session_state['use_filtered']:
-            data = st.session_state['filtered_data']
-        else:
-            data = st.session_state['data']
+    st.session_state['filtered_data'] = vifil.filter_options(data)
+    st.session_state['use_filtered'] = st.toggle('Apply Filters')
+    if st.session_state['use_filtered']:
+        data = st.session_state['filtered_data']
+    else:
+        data = st.session_state['data']
 
         
 

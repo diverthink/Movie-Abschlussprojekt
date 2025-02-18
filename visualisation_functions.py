@@ -2,6 +2,7 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import os
+import ast
 
 
 
@@ -14,6 +15,32 @@ def load_movie_data(path=None):
     
     return pd.read_csv(path)
 
+def essential_infos(df):
+    
+    infos = {'Title_count': df['Title'].nunique(),
+             'With_Oscars': df['has_oscars'].sum()}
+    
+    num_columns = ['Duration', 'Rating', 'Votes', 'budget', 'grossWorldWide', 'gross_US_Canada','opening_weekend_Gross', 'wins', 'nominations', 'oscars', 'inflation_gross_opening', 'budget_inflation']
+    
+    cat_columns = ['Year', 'decade', 'MPA_category']
+
+    lists_cat_columns = ['directors', 'writers', 'stars',
+       'countries_origin', 'filming_locations', 'production_companies',
+       'Languages', 'main_genres']
+
+    for column in num_columns:
+        infos[column] = round(df[column].mean(), 2)
+    
+    for column in cat_columns:
+        infos[column] = df[column].nunique()
+    
+    for column in lists_cat_columns:
+        new_df = pd.DataFrame()
+        new_df[column] = df[column].apply(lambda x: ast.literal_eval(x) if isinstance(x, str) else x)
+        exploded_df = df.explode(column)
+        infos[column] = exploded_df[column].nunique()
+    
+    return infos
 
 def histplot(df, x_axis='Year', y_axis=None, groupby=None, aggregationtype=None):
     '''
