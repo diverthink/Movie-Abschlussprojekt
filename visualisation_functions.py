@@ -5,14 +5,14 @@ import os
 import ast
 
 
-def load_movie_data(path=None):
-    """Lädt den bereinigten Film-DataFrame aus einer CSV-Datei."""
-    if path is None:
-        # Dynamischer Pfad relativ zum Verzeichnis der Datei
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        path = os.path.join(script_dir, "Datasets", "df_new_movies_cleaned.csv")
-    
-    return pd.read_csv(path)
+#def load_movie_data(path=None):
+#    """Lädt den bereinigten Film-DataFrame aus einer CSV-Datei."""
+#    if path is None:
+#        # Dynamischer Pfad relativ zum Verzeichnis der Datei
+#        script_dir = os.path.dirname(os.path.abspath(__file__))
+#        path = os.path.join(script_dir, "Datasets", "df_new_movies_cleaned.csv")
+#    
+#    return pd.read_csv(path)
 
 def essential_infos(df):
     
@@ -51,7 +51,7 @@ def histplot(df, x_axis='Year', y_axis=None, groupby=None, aggregationtype=None)
             median_data = df.groupby(x_axis)[y_axis].median().reset_index()
             fig = px.bar(median_data, x=x_axis, y=y_axis, text_auto=True, labels={x_axis: f'{x_axis}', y_axis: f'median of {y_axis}'})
     else:
-        fig = px.histogram(data_frame=df, x=x_axis, y=y_axis, color=groupby, histfunc=aggregationtype, text_auto=True)
+        fig = px.histogram(data_frame=df, x=x_axis, y=y_axis, color=groupby, histfunc=aggregationtype, text_auto=True).update_xaxes(categoryorder='total descending')
     #if y_axis:
     #    fig = px.histogram(data_frame=df, x=x_axis, y=y_axis, text_auto=True)
 #
@@ -60,8 +60,10 @@ def histplot(df, x_axis='Year', y_axis=None, groupby=None, aggregationtype=None)
     #    
     #else:
     #    fig = px.histogram(data_frame=df, x=x_axis, text_auto=True)
-
     fig.update_traces(textfont_size=12, textangle=0, cliponaxis = False)
+    
+    fig.update_layout(bargap = 0.1, xaxis=dict(tickangle=45))
+    
     
     return fig
 
@@ -75,7 +77,7 @@ def scatter(df, x_axis, y_axis, groupby=None):
     return fig
 
 
-def violinplot(df, y_axis, x_axis = None, groups=None, points='all'):
+def violinplot(df, y_axis, x_axis = None, groups=None, points='outliers'):
 
     '''
     Erstellt ein Violinplot mit den gegebenen Daten.
@@ -122,6 +124,40 @@ def lineplot(data, x_axis, y_axis, aggregation_type):
         aggregated = aggregated.sort_values(by=x_axis, ascending=True)
     
     fig = px.line(aggregated, x=x_axis, y=y_axis, markers=True)
+    fig.update_layout(xaxis_title=x_axis, yaxis_title=y_axis,xaxis=dict(tickangle=45))
+    
+    return fig
+
+def multiple_lineplot(data, x_axis, y_axis, aggregation_type, else_lines = None):
+
+    '''
+    Erstellt ein Liniendiagramm mit den angegebenen aggregierten Spalten und gruppiert nach den gruppen..
+    aggregation_type = ['count', 'sum', 'mean', 'min', 'max', 'median']
+    '''
+
+    if aggregation_type == 'mean':
+        aggregated = data.groupby([x_axis, else_lines], as_index=False)[y_axis].mean()
+
+    elif aggregation_type == 'count':
+        aggregated = data.groupby([x_axis, else_lines], as_index=False)[y_axis].count()
+
+    elif aggregation_type == 'median':
+        aggregated = data.groupby([x_axis, else_lines], as_index=False)[y_axis].median()
+
+    elif aggregation_type == 'sum':
+        aggregated = data.groupby([x_axis, else_lines], as_index=False)[y_axis].sum()
+
+    elif aggregation_type == 'min':
+        aggregated = data.groupby([x_axis, else_lines], as_index=False)[y_axis].min()
+
+    elif aggregation_type == 'max':
+        aggregated = data.groupby([x_axis, else_lines], as_index=False)[y_axis].max()
+    
+    
+    if data[x_axis].dtype == 'int64' or data[x_axis].dtype == 'float64':
+        aggregated = aggregated.sort_values(by=x_axis, ascending=True)
+    
+    fig = px.line(aggregated, x=x_axis, y=y_axis, markers=True, color=else_lines)
     fig.update_layout(xaxis_title=x_axis, yaxis_title=y_axis)
     
     return fig
@@ -166,6 +202,12 @@ def compare_graphs(data: pd.DataFrame, x_axis: str, y_axis_1: str, y_axis_2: str
                            xaxis_title=f"{x_axis}",
                            yaxis=dict(title=f"{y_axis_1.capitalize()}", side="left"),
                            yaxis2=dict(title=f"{y_axis_2.capitalize()}", overlaying="y", side="right", showgrid=False),
-                           legend_title="Kategorie")
+                           legend_title="Category")
 
     return fig_test
+
+
+def show_best_films(data, x_axis, y_axis):
+    fig = px.histogram(data_frame=data, x=x_axis, y=y_axis, text_auto=True)
+    fig.update_layout(yaxis_title=y_axis, xaxis=dict(tickangle=45))
+    return fig

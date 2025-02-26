@@ -8,7 +8,7 @@ def concatenate_data():
     script_dir = os.getcwd()  # Pfad zum Skript
 
     for year in range(1960, 2025):
-        data_path = os.path.join(script_dir, 'Data', f'{year}', f'merged_movies_data_{year}.csv')
+        data_path = os.path.join(script_dir, 'Datasets', 'Yearly_Data', f'{year}', f'merged_movies_data_{year}.csv')
 
         if os.path.exists(data_path):
             print(f"Lese Datei: {data_path}")  # Debugging-Ausgabe
