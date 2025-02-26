@@ -2,6 +2,8 @@ import streamlit as st
 import pandas as pd
 import ast
 
+
+
 def filter_options(df):
 
     if 'visual_filters' not in st.session_state:
@@ -12,7 +14,7 @@ def filter_options(df):
     with col1:
         st.subheader("Year")
         year_min, year_max = int(df['Year'].min()), int(df['Year'].max())
-        st.session_state['visual_filters']['year_range'] = st.slider("Select Year Range", year_min, year_max, (year_min, year_max), key='year')
+        st.session_state['visual_filters']['year_range'] = st.slider("Select Year Range", year_min, year_max, (year_min, year_max), key='year_slider')
 
     with col2:
         st.subheader("Duration")
@@ -23,13 +25,13 @@ def filter_options(df):
             custom_max,
             (duration_min, custom_max),
             help="Drag to filter to max (300), to include all longer movies.",
-            key='duration'
+            key='duration_slider'
         )
 
     with col3:
         st.subheader("Rating")
         rating_min, rating_max = 0.0, 10.0
-        st.session_state['visual_filters']['rating_range'] = st.slider("Select Rating Range", rating_min, rating_max, (rating_min, rating_max), key='rating')
+        st.session_state['visual_filters']['rating_range'] = st.slider("Select Rating Range", rating_min, rating_max, (rating_min, rating_max), key='rating_slider')
 
     st.divider()
 
@@ -38,14 +40,14 @@ def filter_options(df):
 
     with col4:
         st.subheader("Genres")
-        df['main_genres'] = df['main_genres'].apply(lambda x: ast.literal_eval(x) if isinstance(x, str) else x)
-        exploded_genres = df.explode('main_genres')
-        genres_to_choose = list(exploded_genres['main_genres'].unique())  # Nur Hauptkategorien
+        df['Genres'] = df['Genres'].apply(lambda x: ast.literal_eval(x) if isinstance(x, str) else x)
+        exploded_genres = df.explode('Genres')
+        genres_to_choose = list(exploded_genres['Genres'].unique())  # Nur Hauptkategorien
         st.session_state['visual_filters']['selected_genres'] = st.multiselect("Select Genres", genres_to_choose)
 
     with col5:
         st.subheader("Audience Suitability")
-        st.session_state['visual_filters']['selected_categories'] = st.multiselect("Select MPA Categories", list(df['MPA_category'].unique()))
+        st.session_state['visual_filters']['selected_categories'] = st.multiselect("Select MPA Categories", list(df['MPA'].unique()))
 
     st.divider()
 
@@ -55,17 +57,17 @@ def filter_options(df):
     with col6:
         st.subheader("Stars")
         stars_df = pd.DataFrame()
-        stars_df['stars'] = df['stars'].apply(lambda x: ast.literal_eval(x) if isinstance(x, str) else x)
-        exploded_stars = stars_df.explode('stars')
-        stars_to_choose = list(exploded_stars['stars'].unique())  # Einzelne Stars
+        stars_df['Stars'] = df['Stars'].apply(lambda x: ast.literal_eval(x) if isinstance(x, str) else x)
+        exploded_stars = stars_df.explode('Stars')
+        stars_to_choose = list(exploded_stars['Stars'].unique())  # Einzelne Stars
         st.session_state['visual_filters']['selected_stars'] = st.multiselect(label='Search for Stars', options=stars_to_choose, placeholder="Select Stars")
 
     with col7:
         st.subheader("Directors")
         director_df = pd.DataFrame()
-        director_df['directors'] = df['directors'].apply(lambda x: ast.literal_eval(x) if isinstance(x, str) else x)
-        exploded_directors = director_df.explode('directors')
-        directors_to_choose = list(exploded_directors['directors'].unique())  # Einzelne Directors
+        director_df['Directors'] = df['Directors'].apply(lambda x: ast.literal_eval(x) if isinstance(x, str) else x)
+        exploded_directors = director_df.explode('Directors')
+        directors_to_choose = list(exploded_directors['Directors'].unique())  # Einzelne Directors
         st.session_state['visual_filters']['selected_directors'] = st.multiselect("Search for Directors", directors_to_choose, placeholder='Select Directors')
 
     st.divider()
@@ -105,28 +107,28 @@ def filter_options(df):
     # Genre filtern
     selected_genres = filters.get('selected_genres', [])
     if selected_genres:
-        filtered_df = filtered_df[filtered_df['main_genres'].apply(lambda x: isinstance(x, list) and any(genre in x for genre in selected_genres))]
+        filtered_df = filtered_df[filtered_df['Genres'].apply(lambda x: isinstance(x, list) and any(genre in x for genre in selected_genres))]
 
     # Oscars filtern
     oscars_filter = filters.get('oscars_filter', False)
     if oscars_filter:
-        filtered_df = filtered_df[filtered_df['oscars'] > 0]
+        filtered_df = filtered_df[filtered_df['Oscar Nominations'] > 0]
 
     # Stars filtern
     selected_stars = filters.get('selected_stars', [])
     if selected_stars:
-        filtered_df['stars'] = filtered_df['stars'].apply(lambda x: ast.literal_eval(x) if isinstance(x, str) else x)
-        filtered_df = filtered_df[filtered_df['stars'].apply(lambda x: isinstance(x, list) and any(star in x for star in selected_stars))]
+        filtered_df['Stars'] = filtered_df['Stars'].apply(lambda x: ast.literal_eval(x) if isinstance(x, str) else x)
+        filtered_df = filtered_df[filtered_df['Stars'].apply(lambda x: isinstance(x, list) and any(star in x for star in selected_stars))]
 
     # Regisseure filtern
     selected_directors = filters.get('selected_directors', [])
     if selected_directors:
-        filtered_df['directors'] = filtered_df['directors'].apply(lambda x: ast.literal_eval(x) if isinstance(x, str) else x)
-        filtered_df = filtered_df[filtered_df['directors'].apply(lambda x: isinstance(x, list) and any(director in x for director in selected_directors))]
+        filtered_df['Directors'] = filtered_df['Directors'].apply(lambda x: ast.literal_eval(x) if isinstance(x, str) else x)
+        filtered_df = filtered_df[filtered_df['Directors'].apply(lambda x: isinstance(x, list) and any(director in x for director in selected_directors))]
 
     # MPA-Kategorie filtern
     selected_categories = filters.get('selected_categories', [])
     if selected_categories:
-        filtered_df = filtered_df[filtered_df['MPA_category'].isin(selected_categories)]
+        filtered_df = filtered_df[filtered_df['MPA'].isin(selected_categories)]
 
     return filtered_df

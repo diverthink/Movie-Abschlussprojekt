@@ -5,7 +5,6 @@ import os
 import ast
 
 
-
 def load_movie_data(path=None):
     """Lädt den bereinigten Film-DataFrame aus einer CSV-Datei."""
     if path is None:
@@ -18,15 +17,15 @@ def load_movie_data(path=None):
 def essential_infos(df):
     
     infos = {'Title_count': df['Title'].nunique(),
-             'With_Oscars': df['has_oscars'].sum()}
+             'With_Oscars': df['Nominated for Oscar'].sum()}
     
-    num_columns = ['Duration', 'Rating', 'Votes', 'budget', 'grossWorldWide', 'gross_US_Canada','opening_weekend_Gross', 'wins', 'nominations', 'oscars', 'inflation_gross_opening', 'budget_inflation']
+    num_columns = ['Duration', 'Rating', 'Votes', 'Budget', 'World Wide Gross', 'North America Gross','Opening Weekend Gross', 'Award Wins', 'Award Nominations', 'Oscar Nominations', 'Inflation Adjusted Opening Gross', 'Inflation Adjusted Budget']
     
-    cat_columns = ['Year', 'decade', 'MPA_category']
+    cat_columns = ['Year', 'Decade', 'MPA']
 
-    lists_cat_columns = ['directors', 'writers', 'stars',
-       'countries_origin', 'filming_locations', 'production_companies',
-       'Languages', 'main_genres']
+    lists_cat_columns = ['Directors', 'Writers', 'Stars',
+       'Origin Countries', 'Filming Locations', 'Production Companies',
+       'Languages', 'Genres']
 
     for column in num_columns:
         infos[column] = round(df[column].mean(), 2)
@@ -50,7 +49,7 @@ def histplot(df, x_axis='Year', y_axis=None, groupby=None, aggregationtype=None)
 
     if aggregationtype == 'median':
             median_data = df.groupby(x_axis)[y_axis].median().reset_index()
-            fig = px.bar(median_data, x=x_axis, y=y_axis, text_auto=True)
+            fig = px.bar(median_data, x=x_axis, y=y_axis, text_auto=True, labels={x_axis: f'{x_axis}', y_axis: f'median of {y_axis}'})
     else:
         fig = px.histogram(data_frame=df, x=x_axis, y=y_axis, color=groupby, histfunc=aggregationtype, text_auto=True)
     #if y_axis:
@@ -70,7 +69,7 @@ def histplot(df, x_axis='Year', y_axis=None, groupby=None, aggregationtype=None)
 def scatter(df, x_axis, y_axis, groupby=None):
     '''Erstellt einen Scatterplot mit den gegebenen Daten.'''
 
-    fig = px.scatter(data_frame=df, x=x_axis, y=y_axis, color=groupby, hover_name='Title', hover_data=['Year', 'Duration', 'Rating', 'wins', 'nominations', 'oscars', 'MPA_category', 'main_genres', 'directors', 'writers', 'stars', 'opening_weekend_Gross'])
+    fig = px.scatter(data_frame=df, x=x_axis, y=y_axis, color=groupby, hover_name='Title', hover_data=['Year', 'Duration', 'Rating', 'Award Wins', 'Award Nominations', 'Oscar Nominations', 'MPA', 'Genres', 'Directors', 'Writers', 'Stars', 'Opening Weekend Gross'])
 
     #fig.update_traces(textfont_size=12, textangle=0, cliponaxis = False)
     return fig
@@ -88,7 +87,7 @@ def violinplot(df, y_axis, x_axis = None, groups=None, points='all'):
     "False" oder False → Zeigt keine Punkte an.
     '''
 
-    fig = px.violin(df, y=y_axis, x=x_axis, color=groups, box=True, points=points, hover_data=['Title', 'Year', 'Duration', 'Rating', 'wins', 'nominations', 'oscars', 'MPA_category', 'main_genres', 'directors', 'writers', 'stars'])
+    fig = px.violin(df, y=y_axis, x=x_axis, color=groups, box=True, points=points, hover_data=['Title', 'Year', 'Duration', 'Rating', 'Award Wins', 'Award Nominations', 'Oscar Nominations', 'MPA', 'Genres', 'Directors', 'Writers', 'Stars'])
     
 
     return fig
