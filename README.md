@@ -1,8 +1,11 @@
 # Movie-Abschlussprojekt
 
-Unser Abschlussprojekt fuer die Data Science Weiterbildung.
+Unser Abschlussprojekt fuer die Data Science Weiterbildung.  
+
 Achtung!!! Reihenfolge wichtig!!!
 
+
+# Ausfuehrung mit Docker:
 1. Zuerst `pre-processing.py` ausfuehren, um die benoetigten .csv Dateien in Datasets zu erstellen (kann ein paar Minuten dauern).  
     Musste ausgelagert werden, da Projekt sonst zu gross fuer das verschicken gewesen waere.
 
@@ -13,10 +16,11 @@ Achtung!!! Reihenfolge wichtig!!!
 
 4. Wenn der Build erfolgreich war, starten des Containers in der Konsole mit: `docker run -p 8501:8501 movie_it` .
 
-5. Jetzt kann die App in einem Browser der Wahl unter `http://localhost:8501` erreicht werden.
+5. Jetzt kann die App in einem Browser der Wahl unter `http://localhost:8501` erreicht werden. Es kann sein, dass die Oscar Vorhersage nicht funktioniert.
 
 
 
+# Lokale Virtuelle Umgebung
 **Alternative ueber eine Virtuelle Umgebung. In diesem Fall mit Conda und PowerShell:**
 
 1. Es muss Conda installiert sein.
